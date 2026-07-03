@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能订货系统</title>
+  <link rel="stylesheet" href="css/order.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>智能订货系统</h1>
+      <div class="header-meta" id="headerMeta">2026 vs 2027 订货对比 · 款色数 · 订货量 · 买货额 · 品类</div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="overview">概览</button>
+      <button class="tab" data-tab="history">历史数据</button>
+      <button class="tab" data-tab="create">新建订货</button>
+      <button class="tab" data-tab="orders">订货单</button>
+    </nav>
+
+    <!-- 概览：2026 vs 2027 订货对比 -->
+    <section class="panel active" id="panel-overview">
+      <div class="card">
+        <div class="card-header">2026 vs 2027 订货对比</div>
+        <div class="card-body">
+          <div id="overviewKpi"></div>
+        </div>
+      </div>
+      <div class="compare-grid compare-grid-charts">
+        <div class="card">
+          <div class="card-header">大类订货量对比</div>
+          <div class="card-body" id="overviewCategoryChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">男女性别对比</div>
+          <div class="card-body" id="overviewGenderChart"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">OTB 买货额与增长率</div>
+        <div class="card-body" id="overviewOtbChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span>区域明细对比表</span>
+          <button class="btn btn-outline" id="btnExportRegion">导出 CSV</button>
+        </div>
+        <div class="card-body table-wrap">
+          <table class="data-table compare-table">
+            <thead>
+              <tr>
+                <th rowspan="2">区域</th>
+                <th rowspan="2">性别</th>
+                <th colspan="3" class="group-head">款色数</th>
+                <th colspan="4" class="group-head">订货量(件)</th>
+                <th colspan="4" class="group-head">买货额(万元)</th>
+              </tr>
+              <tr>
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增加数</th>
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增长率</th><th class="num">占比</th>
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增长率</th><th class="num">占比</th>
+              </tr>
+            </thead>
+            <tbody id="overviewRegionTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span>中类明细对比表</span>
+          <div class="card-header-tools">
+            <label class="card-header-filter">
+              <span>区域</span>
+              <select id="subCategoryRegionFilter">
+                <option value="">全部</option>
+              </select>
+            </label>
+            <button class="btn btn-outline" id="btnExportSubCategory">导出 CSV</button>
+          </div>
+        </div>
+        <div class="card-body table-wrap">
+          <table class="data-table compare-table">
+            <thead>
+              <tr>
+                <th rowspan="2">大类</th>
+                <th rowspan="2">中类</th>
+                <th colspan="3" class="group-head">款色数</th>
+                <th colspan="4" class="group-head">订货量(件)</th>
+                <th colspan="4" class="group-head">买货额(万元)</th>
+              </tr>
+              <tr id="compareYearRow">
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增加数</th>
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增长率</th><th class="num">占比</th>
+                <th class="num" data-year="base">—</th><th class="num" data-year="current">—</th><th class="num">增长率</th><th class="num">占比</th>
+              </tr>
+            </thead>
+            <tbody id="overviewCategoryTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 历史数据 -->
+    <section class="panel" id="panel-history">
+      <div class="card">
+        <div class="card-header">历史销售数据</div>
+        <div class="card-body">
+          <div class="filter-bar" id="historyFilters"></div>
+          <div class="table-wrap">
+            <table class="data-table" id="historyTable">
+              <thead>
+                <tr>
+                  <th>区域</th>
+                  <th>品牌</th>
+                  <th class="num">年份</th>
+                  <th>季节</th>
+                  <th>款号</th>
+                  <th>中类</th>
+                  <th>性别</th>
+                  <th>颜色</th>
+                  <th class="num">标准价</th>
+                  <th>色系</th>
+                  <th>面料</th>
+                  <th>版型</th>
+                  <th class="num">订货量</th>
+                  <th class="num">历史销量</th>
+                  <th>尺码分布</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 新建订货 -->
+    <section class="panel" id="panel-create">
+      <div class="card">
+        <div class="card-header">新建订货单</div>
+        <div class="card-body">
+          <div class="form-row" id="createForm"></div>
+          <div class="form-row form-row-recommend" id="createRecommendForm"></div>
+          <div id="sizeEditor" style="display:none"></div>
+          <div id="recommendArea"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 订货单列表 -->
+    <section class="panel" id="panel-orders">
+      <div class="kpi-row" id="orderKpi"></div>
+      <div class="card">
+        <div class="card-header">
+          <span>订货单列表</span>
+          <div class="card-header-tools">
+            <button class="btn btn-primary" id="btnAutoMatch">一键匹配下单</button>
+            <button class="btn btn-outline btn-danger" id="btnClearPlaced">一键清除</button>
+            <button class="btn btn-outline" id="btnExport">导出 CSV</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap order-table-wrap">
+            <table class="data-table" id="orderTable">
+              <thead id="orderHead"></thead>
+              <tbody id="orderBody"></tbody>
+              <tfoot id="orderFoot"></tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
